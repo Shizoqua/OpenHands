@@ -18,12 +18,14 @@ interface MCPServerListProps {
   servers: MCPServerConfig[];
   onEdit: (server: MCPServerConfig) => void;
   onDelete: (serverId: string) => void;
+  onToggle: (serverId: string) => void;
 }
 
 export function MCPServerList({
   servers,
   onEdit,
   onDelete,
+  onToggle,
 }: MCPServerListProps) {
   const { t } = useTranslation();
 
@@ -41,7 +43,7 @@ export function MCPServerList({
     <div className="border border-tertiary rounded-md overflow-hidden">
       <table className="w-full">
         <thead className="bg-base-tertiary">
-          <tr className="grid grid-cols-[minmax(0,0.25fr)_120px_minmax(0,1fr)_120px] gap-4 items-start">
+          <tr className="grid grid-cols-[minmax(0,0.25fr)_120px_minmax(0,1fr)_140px] gap-4 items-start">
             <th className="text-left p-3 text-sm font-medium">
               {t(I18nKey.SETTINGS$NAME)}
             </th>
@@ -63,6 +65,7 @@ export function MCPServerList({
               server={server}
               onEdit={() => onEdit(server)}
               onDelete={() => onDelete(server.id)}
+              onToggle={() => onToggle(server.id)}
             />
           ))}
         </tbody>

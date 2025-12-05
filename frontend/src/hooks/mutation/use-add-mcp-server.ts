@@ -14,6 +14,7 @@ interface MCPServerConfig {
   command?: string;
   args?: string[];
   env?: Record<string, string>;
+  disabled?: boolean;
 }
 
 export function useAddMcpServer() {
@@ -36,6 +37,7 @@ export function useAddMcpServer() {
         const sseServer: MCPSSEServer = {
           url: server.url!,
           ...(server.api_key && { api_key: server.api_key }),
+          disabled: server.disabled ?? false,
         };
         newConfig.sse_servers.push(sseServer);
       } else if (server.type === "stdio") {
@@ -44,6 +46,7 @@ export function useAddMcpServer() {
           command: server.command!,
           ...(server.args && { args: server.args }),
           ...(server.env && { env: server.env }),
+          disabled: server.disabled ?? false,
         };
         newConfig.stdio_servers.push(stdioServer);
       } else if (server.type === "shttp") {
@@ -51,6 +54,7 @@ export function useAddMcpServer() {
           url: server.url!,
           ...(server.api_key && { api_key: server.api_key }),
           ...(server.timeout !== undefined && { timeout: server.timeout }),
+          disabled: server.disabled ?? false,
         };
         newConfig.shttp_servers.push(shttpServer);
       }

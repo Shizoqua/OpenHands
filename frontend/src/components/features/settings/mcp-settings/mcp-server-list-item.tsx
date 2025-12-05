@@ -1,4 +1,4 @@
-import { FaPencil, FaTrash } from "react-icons/fa6";
+import { FaPencil, FaTrash, FaPowerOff, FaPower } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 import { I18nKey } from "#/i18n/declaration";
 
@@ -12,16 +12,19 @@ interface MCPServerConfig {
   command?: string;
   args?: string[];
   env?: Record<string, string>;
+  disabled?: boolean;
 }
 
 export function MCPServerListItem({
   server,
   onEdit,
   onDelete,
+  onToggle,
 }: {
   server: MCPServerConfig;
   onEdit: () => void;
   onDelete: () => void;
+  onToggle: () => void;
 }) {
   const { t } = useTranslation();
 
@@ -60,17 +63,27 @@ export function MCPServerListItem({
 
   const serverName = server.type === "stdio" ? server.name : server.url;
   const serverDescription = getServerDescription(server);
+  const isDisabled = server.disabled ?? false;
 
   return (
     <tr
       data-testid="mcp-server-item"
-      className="grid grid-cols-[minmax(0,0.25fr)_120px_minmax(0,1fr)_120px] gap-4 items-start border-t border-tertiary"
+      className={`grid grid-cols-[minmax(0,0.25fr)_120px_minmax(0,1fr)_140px] gap-4 items-start border-t border-tertiary ${
+        isDisabled ? "opacity-50" : ""
+      }`}
     >
       <td
         className="p-3 text-sm text-content-2 truncate min-w-0"
         title={serverName}
       >
-        {serverName}
+        <div className="flex items-center gap-2">
+          <span>{serverName}</span>
+          {isDisabled && (
+            <span className="text-xs bg-gray-500 text-white px-2 py-0.5 rounded">
+              Disabled
+            </span>
+          )}
+        </div>
       </td>
 
       <td className="p-3 text-sm text-content-2 whitespace-nowrap">
@@ -87,6 +100,18 @@ export function MCPServerListItem({
       </td>
 
       <td className="p-3 flex items-start justify-end gap-4 whitespace-nowrap">
+        <button
+          data-testid="toggle-mcp-server-button"
+          type="button"
+          onClick={onToggle}
+          aria-label={isDisabled ? `Enable ${serverName}` : `Disable ${serverName}`}
+          className={`cursor-pointer hover:text-content-1 transition-colors ${
+            isDisabled ? "text-gray-400" : "text-green-500"
+          }`}
+          title={isDisabled ? "Enable server" : "Disable server"}
+        >
+          {isDisabled ? <FaPowerOff size={16} /> : <FaPower size={16} />}
+        </button>
         <button
           data-testid="edit-mcp-server-button"
           type="button"

@@ -16,6 +16,7 @@ export type ProviderToken = {
 export type MCPSSEServer = {
   url: string;
   api_key?: string;
+  disabled?: boolean;
 };
 
 export type MCPStdioServer = {
@@ -23,12 +24,14 @@ export type MCPStdioServer = {
   command: string;
   args?: string[];
   env?: Record<string, string>;
+  disabled?: boolean;
 };
 
 export type MCPSHTTPServer = {
   url: string;
   api_key?: string;
   timeout?: number;
+  disabled?: boolean;
 };
 
 export type MCPConfig = {

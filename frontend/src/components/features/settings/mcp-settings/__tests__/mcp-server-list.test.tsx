@@ -28,12 +28,14 @@ describe("MCPServerList", () => {
   it("should render servers with proper layout structure", () => {
     const mockOnEdit = vi.fn();
     const mockOnDelete = vi.fn();
+    const mockOnToggle = vi.fn();
 
     render(
       <MCPServerList
         servers={mockServers}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
+        onToggle={mockOnToggle}
       />,
     );
 
@@ -47,8 +49,10 @@ describe("MCPServerList", () => {
     expect(serverItems).toHaveLength(2);
 
     // Check that action buttons are present for each server
+    const toggleButtons = screen.getAllByTestId("toggle-mcp-server-button");
     const editButtons = screen.getAllByTestId("edit-mcp-server-button");
     const deleteButtons = screen.getAllByTestId("delete-mcp-server-button");
+    expect(toggleButtons).toHaveLength(2);
     expect(editButtons).toHaveLength(2);
     expect(deleteButtons).toHaveLength(2);
   });
@@ -56,12 +60,14 @@ describe("MCPServerList", () => {
   it("should render empty state when no servers", () => {
     const mockOnEdit = vi.fn();
     const mockOnDelete = vi.fn();
+    const mockOnToggle = vi.fn();
 
     render(
       <MCPServerList
         servers={[]}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
+        onToggle={mockOnToggle}
       />,
     );
 
@@ -77,12 +83,14 @@ describe("MCPServerList", () => {
 
     const mockOnEdit = vi.fn();
     const mockOnDelete = vi.fn();
+    const mockOnToggle = vi.fn();
 
     render(
       <MCPServerList
         servers={[longUrlServer]}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
+        onToggle={mockOnToggle}
       />,
     );
 
@@ -114,12 +122,14 @@ describe("MCPServerList", () => {
 
     const mockOnEdit = vi.fn();
     const mockOnDelete = vi.fn();
+    const mockOnToggle = vi.fn();
 
     render(
       <MCPServerList
         servers={[stdioServer]}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
+        onToggle={mockOnToggle}
       />,
     );
 
@@ -138,12 +148,14 @@ describe("MCPServerList", () => {
 
     const mockOnEdit = vi.fn();
     const mockOnDelete = vi.fn();
+    const mockOnToggle = vi.fn();
 
     render(
       <MCPServerList
         servers={[stdioServer]}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
+        onToggle={mockOnToggle}
       />,
     );
 

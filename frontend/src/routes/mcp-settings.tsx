@@ -4,6 +4,7 @@ import { useSettings } from "#/hooks/query/use-settings";
 import { useDeleteMcpServer } from "#/hooks/mutation/use-delete-mcp-server";
 import { useAddMcpServer } from "#/hooks/mutation/use-add-mcp-server";
 import { useUpdateMcpServer } from "#/hooks/mutation/use-update-mcp-server";
+import { useToggleMcpServer } from "#/hooks/mutation/use-toggle-mcp-server";
 import { I18nKey } from "#/i18n/declaration";
 
 import { MCPServerList } from "#/components/features/settings/mcp-settings/mcp-server-list";
@@ -24,6 +25,7 @@ interface MCPServerConfig {
   command?: string;
   args?: string[];
   env?: Record<string, string>;
+  disabled?: boolean;
 }
 
 function MCPSettingsScreen() {
@@ -32,6 +34,7 @@ function MCPSettingsScreen() {
   const { mutate: deleteMcpServer } = useDeleteMcpServer();
   const { mutate: addMcpServer } = useAddMcpServer();
   const { mutate: updateMcpServer } = useUpdateMcpServer();
+  const { mutate: toggleMcpServer } = useToggleMcpServer();
 
   const [view, setView] = useState<"list" | "add" | "edit">("list");
   const [editingServer, setEditingServer] = useState<MCPServerConfig | null>(
@@ -54,6 +57,7 @@ function MCPSettingsScreen() {
       type: "sse" as const,
       url: typeof server === "string" ? server : server.url,
       api_key: typeof server === "object" ? server.api_key : undefined,
+      disabled: typeof server === "object" ? (server.disabled ?? false) : false,
     })),
     ...mcpConfig.stdio_servers.map((server, index) => ({
       id: `stdio-${index}`,
@@ -62,6 +66,7 @@ function MCPSettingsScreen() {
       command: server.command,
       args: server.args,
       env: server.env,
+      disabled: server.disabled ?? false,
     })),
     ...mcpConfig.shttp_servers.map((server, index) => ({
       id: `shttp-${index}`,
@@ -69,6 +74,7 @@ function MCPSettingsScreen() {
       url: typeof server === "string" ? server : server.url,
       api_key: typeof server === "object" ? server.api_key : undefined,
       timeout: typeof server === "object" ? server.timeout : undefined,
+      disabled: typeof server === "object" ? (server.disabled ?? false) : false,
     })),
   ];
 
@@ -124,6 +130,14 @@ function MCPSettingsScreen() {
     setServerToDelete(null);
   };
 
+  const handleToggleServer = (serverId: string) => {
+    toggleMcpServer(serverId, {
+      onSuccess: () => {
+        // Settings query will be invalidated automatically
+      },
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="flex flex-col gap-5">
@@ -154,6 +168,7 @@ function MCPSettingsScreen() {
             servers={allServers}
             onEdit={handleEditClick}
             onDelete={handleDeleteClick}
+            onToggle={handleToggleServer}
           />
         </>
       )}

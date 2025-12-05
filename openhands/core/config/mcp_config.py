@@ -49,10 +49,12 @@ class MCPSSEServerConfig(BaseModel):
     Attributes:
         url: The server URL
         api_key: Optional API key for authentication
+        disabled: Whether this server is disabled (default: False)
     """
 
     url: str
     api_key: str | None = None
+    disabled: bool = False
 
     @field_validator('url')
     @classmethod
@@ -69,12 +71,14 @@ class MCPStdioServerConfig(BaseModel):
         command: The command to run the server
         args: The arguments to pass to the server
         env: The environment variables to set for the server
+        disabled: Whether this server is disabled (default: False)
     """
 
     name: str
     command: str
     args: list[str] = Field(default_factory=list)
     env: dict[str, str] = Field(default_factory=dict)
+    disabled: bool = False
 
     @field_validator('name', mode='before')
     @classmethod
@@ -195,11 +199,13 @@ class MCPSHTTPServerConfig(BaseModel):
         url: The server URL
         api_key: Optional API key for authentication
         timeout: Timeout in seconds for tool calls (default: 60s)
+        disabled: Whether this server is disabled (default: False)
     """
 
     url: str
     api_key: str | None = None
     timeout: int | None = 60
+    disabled: bool = False
 
     @field_validator('url', mode='before')
     @classmethod

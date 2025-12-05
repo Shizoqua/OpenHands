@@ -79,10 +79,15 @@ async def create_mcp_clients(
     if stdio_servers is None:
         stdio_servers = []
 
+    # Filter out disabled servers before processing
+    enabled_sse_servers = [s for s in sse_servers if not getattr(s, 'disabled', False)]
+    enabled_shttp_servers = [s for s in shttp_servers if not getattr(s, 'disabled', False)]
+    enabled_stdio_servers = [s for s in stdio_servers if not getattr(s, 'disabled', False)]
+
     servers: list[MCPSSEServerConfig | MCPSHTTPServerConfig | MCPStdioServerConfig] = [
-        *sse_servers,
-        *shttp_servers,
-        *stdio_servers,
+        *enabled_sse_servers,
+        *enabled_shttp_servers,
+        *enabled_stdio_servers,
     ]
 
     if not servers:
@@ -179,12 +184,27 @@ async def fetch_mcp_tools_from_config(
     try:
         logger.debug(f'Creating MCP clients with config: {mcp_config}')
 
+        # Filter out disabled servers before creating clients
+        enabled_sse_servers = [
+            s for s in mcp_config.sse_servers if not getattr(s, 'disabled', False)
+        ]
+        enabled_shttp_servers = [
+            s for s in mcp_config.shttp_servers if not getattr(s, 'disabled', False)
+        ]
+        enabled_stdio_servers = (
+            [
+                s for s in mcp_config.stdio_servers if not getattr(s, 'disabled', False)
+            ]
+            if use_stdio
+            else []
+        )
+
         # Create clients - this will fetch tools but not maintain active connections
         mcp_clients = await create_mcp_clients(
-            mcp_config.sse_servers,
-            mcp_config.shttp_servers,
+            enabled_sse_servers,
+            enabled_shttp_servers,
             conversation_id,
-            mcp_config.stdio_servers if use_stdio else [],
+            enabled_stdio_servers,
         )
 
         if not mcp_clients:
